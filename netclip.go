@@ -14,7 +14,7 @@ func main() {
 	l, err := net.Listen("tcp", addr)
 	fatalOnError(err)
 	defer l.Close()
-	log.Println("server is listening on", addr)
+	log.Println("netclip server is listening on", addr)
 
 	for {
 		conn, err := l.Accept()
