@@ -9,7 +9,8 @@ endif
 build:
 	$(DOCKER) run \
 		--rm \
-		-v "$(GOPATH)":/app \
+		-v "$(PWD)/Godeps/_workspace/src":/app/src \
+		-v "$(PWD)":/app/src/$(PACKAGE) \
 		-w /app/src/$(PACKAGE) \
 		-e GOPATH=/app \
 		-e GOOS=$(GOOS) \
