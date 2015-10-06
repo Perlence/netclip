@@ -1,0 +1,13 @@
+{
+	"ImportPath": "github.com/Perlence/netclip",
+	"GoVersion": "go1.5.1",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/atotto/clipboard",
+			"Rev": "7ea6bd46ec9699603347157b5d98cfe5fb2e6938"
+		}
+	]
+}
