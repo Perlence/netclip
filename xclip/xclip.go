@@ -84,10 +84,14 @@ func main() {
 		if len(args) == 0 {
 			r = os.Stdin
 		} else {
-			file, err := os.Open(args[0])
-			fatalOnError(err)
-			defer file.Close()
-			r = file
+			var readers []io.Reader
+			for _, filename := range args {
+				file, err := os.Open(filename)
+				fatalOnError(err)
+				defer file.Close()
+				readers = append(readers, file)
+			}
+			r = io.MultiReader(readers...)
 		}
 
 		tee = io.TeeReader(r, conn)
