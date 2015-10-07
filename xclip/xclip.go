@@ -63,6 +63,7 @@ func main() {
 	fatalOnError(err)
 	defer conn.Close()
 
+	var tee io.Reader
 	if output {
 		_, err = conn.Write([]byte{'p'})
 		fatalOnError(err)
@@ -74,9 +75,7 @@ func main() {
 			log.Fatalln("conn does not implement WriteCloser interface")
 		}
 
-		data, err := ioutil.ReadAll(conn)
-		fatalOnError(err)
-		os.Stdout.Write([]byte(data))
+		tee = io.TeeReader(conn, os.Stdout)
 	} else {
 		_, err = conn.Write([]byte{'y'})
 		fatalOnError(err)
@@ -91,9 +90,10 @@ func main() {
 			r = file
 		}
 
-		_, err = io.Copy(conn, r)
-		fatalOnError(err)
+		tee = io.TeeReader(r, conn)
 	}
+	_, err = ioutil.ReadAll(tee)
+	fatalOnError(err)
 }
 
 type WriteCloser interface {
