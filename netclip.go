@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/atotto/clipboard"
+	"github.com/Perlence/netclip/Godeps/_workspace/src/github.com/atotto/clipboard"
 )
 
 const addr = ":2547"
