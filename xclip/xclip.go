@@ -7,6 +7,8 @@ import (
 	"log"
 	"net"
 	"os"
+
+	"github.com/Perlence/netclip/config"
 )
 
 const (
@@ -59,7 +61,7 @@ func main() {
 	flag.Parse()
 	args := flag.Args()
 
-	conn, err := net.Dial("tcp", ":2547")
+	conn, err := net.Dial("tcp", config.Addr)
 	fatalOnError(err)
 	defer conn.Close()
 

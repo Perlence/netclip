@@ -6,15 +6,15 @@ import (
 	"net"
 
 	"github.com/Perlence/netclip/Godeps/_workspace/src/github.com/atotto/clipboard"
+
+	"github.com/Perlence/netclip/config"
 )
 
-const addr = ":2547"
-
 func main() {
-	l, err := net.Listen("tcp", addr)
+	l, err := net.Listen("tcp", config.Addr)
 	fatalOnError(err)
 	defer l.Close()
-	log.Println("netclip server is listening on", addr)
+	log.Println("netclip server is listening on", config.Addr)
 
 	for {
 		conn, err := l.Accept()
