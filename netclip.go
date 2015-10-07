@@ -36,10 +36,6 @@ func handle(c net.Conn) {
 	log.Printf("%#v", str)
 
 	if len(data) == 0 {
-		return
-	}
-	switch data[0] {
-	case 'p':
 		var clip string
 		clip, err = clipboard.ReadAll()
 		if err != nil {
@@ -47,11 +43,8 @@ func handle(c net.Conn) {
 			return
 		}
 		_, err = c.Write([]byte(clip))
-	case 'y':
-		err = clipboard.WriteAll(str[1:])
-	default:
-		log.Println("command is missing")
-		return
+	} else {
+		err = clipboard.WriteAll(str)
 	}
 	if err != nil {
 		log.Println(err)

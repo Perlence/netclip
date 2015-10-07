@@ -67,9 +67,6 @@ func main() {
 
 	var tee io.Reader
 	if output {
-		_, err = conn.Write([]byte{'p'})
-		fatalOnError(err)
-
 		if wc, ok := conn.(WriteCloser); ok {
 			err := wc.CloseWrite()
 			fatalOnError(err)
@@ -79,9 +76,6 @@ func main() {
 
 		tee = io.TeeReader(conn, os.Stdout)
 	} else {
-		_, err = conn.Write([]byte{'y'})
-		fatalOnError(err)
-
 		var r io.Reader
 		if len(args) == 0 {
 			r = os.Stdin
