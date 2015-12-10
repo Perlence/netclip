@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"flag"
 	"io/ioutil"
 	"log"
 	"net"
@@ -10,7 +12,14 @@ import (
 	"github.com/Perlence/netclip/config"
 )
 
+func init() {
+	flag.StringVar(&config.Addr, "a", config.Addr, "start server on this addr")
+	flag.BoolVar(&config.Unix, "u", config.Unix, "convert Windows line endings to Unix on paste")
+}
+
 func main() {
+	flag.Parse()
+
 	l, err := net.Listen("tcp", config.Addr)
 	fatalOnError(err)
 	defer l.Close()
@@ -40,6 +49,9 @@ func handle(c net.Conn) {
 			return
 		}
 		bclip := []byte(clip)
+		if config.Unix {
+			bclip = bytes.Replace(bclip, []byte{'\r', '\n'}, []byte{'\n'}, -1)
+		}
 		log.Printf("sending %d bytes", len(bclip))
 		_, err = c.Write(bclip)
 	} else {
