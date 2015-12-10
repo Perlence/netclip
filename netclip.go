@@ -32,9 +32,6 @@ func handle(c net.Conn) {
 		return
 	}
 
-	str := string(data)
-	log.Printf("%#v", str)
-
 	if len(data) == 0 {
 		var clip string
 		clip, err = clipboard.ReadAll()
@@ -42,9 +39,12 @@ func handle(c net.Conn) {
 			log.Println(err)
 			return
 		}
-		_, err = c.Write([]byte(clip))
+		bclip := []byte(clip)
+		log.Printf("sending %d bytes", len(bclip))
+		_, err = c.Write(bclip)
 	} else {
-		err = clipboard.WriteAll(str)
+		log.Printf("received %d bytes", len(data))
+		err = clipboard.WriteAll(string(data))
 	}
 	if err != nil {
 		log.Println(err)
