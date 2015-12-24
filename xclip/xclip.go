@@ -1,12 +1,14 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"io"
 	"io/ioutil"
 	"log"
 	"net"
 	"os"
+	"time"
 
 	"github.com/Perlence/netclip/config"
 )
@@ -66,6 +68,7 @@ func main() {
 	defer conn.Close()
 
 	var tee io.Reader
+	var timeoutCh <-chan time.Time
 	if output {
 		if wc, ok := conn.(WriteCloser); ok {
 			err := wc.CloseWrite()
@@ -75,6 +78,7 @@ func main() {
 		}
 
 		tee = io.TeeReader(conn, os.Stdout)
+		timeoutCh = time.After(config.Timeout)
 	} else {
 		var r io.Reader
 		if len(args) == 0 {
@@ -92,7 +96,19 @@ func main() {
 
 		tee = io.TeeReader(r, conn)
 	}
-	_, err = ioutil.ReadAll(tee)
+
+	errCh := make(chan error)
+	go func() {
+		_, err := ioutil.ReadAll(tee)
+		errCh <- err
+	}()
+
+	select {
+	case err = <-errCh:
+		break
+	case <-timeoutCh:
+		err = errors.New("Timed out")
+	}
 	fatalOnError(err)
 }
 
